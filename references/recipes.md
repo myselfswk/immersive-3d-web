@@ -15,6 +15,10 @@ Each recipe is self-contained and respects the skill's rules (one loop, damped i
 10. Lens flare / light shafts (cheap)
 11. Luxury Automotive Showroom (PBR Clearcoat Paint + Contact Shadow)
 12. Floating Glassmorphic Pill Navbar with Telemetry Badge
+13. Cinematic Preloader & Splash Screen with Dual-Curtain Reveal
+14. 3D-to-2D Screen Projected Hotspots
+15. Fullscreen Kinetic Menu Overlay
+16. Zero-Dependency Web Audio Synthesizer
 
 ---
 
@@ -223,6 +227,84 @@ wheels.forEach(w => { w.rotation.x += spinSpeed; });
     </div>
   </nav>
 </header>
+```
+
+## 13. Cinematic Preloader & Splash Screen with Dual-Curtain Reveal
+
+```tsx
+// Dual-curtain split reveal with percentage counter
+<div className="fixed inset-0 z-50 pointer-events-auto flex flex-col items-center justify-between overflow-hidden">
+  <div className={`absolute top-0 left-0 w-full h-1/2 bg-[#060709] border-b border-white/10 transition-transform duration-800 ease-[cubic-bezier(0.85,0,0.15,1)] ${isDismissing ? '-translate-y-full' : 'translate-y-0'}`} />
+  <div className={`absolute bottom-0 left-0 w-full h-1/2 bg-[#060709] border-t border-white/10 transition-transform duration-800 ease-[cubic-bezier(0.85,0,0.15,1)] ${isDismissing ? 'translate-y-full' : 'translate-y-0'}`} />
+  <div className={`relative z-20 flex flex-col items-center justify-center my-auto transition-opacity duration-500 ${isDismissing ? 'opacity-0 scale-95' : 'opacity-100'}`}>
+    <span className="text-8xl font-extralight font-mono text-white">{percent}%</span>
+    {ready && (
+      <button onClick={() => dismiss(true)} className="mt-8 px-8 py-3 rounded-full bg-cyan-400 text-black font-semibold text-xs tracking-widest uppercase">
+        Enter Experience 🔊
+      </button>
+    )}
+  </div>
+</div>
+```
+
+## 14. 3D-to-2D Screen Projected Hotspots
+
+Project 3D coordinate pins into real-time screen pixels using `vector.project(camera)` inside the render loop:
+
+```js
+// in render loop:
+const worldPos = hotspotLocalPos.clone().applyMatrix4(mesh.matrixWorld);
+const screenPos = worldPos.clone().project(camera);
+
+// convert normalized device coordinates (-1..1) to screen pixels:
+const x = ((screenPos.x + 1) * canvasWidth) / 2;
+const y = ((-screenPos.y + 1) * canvasHeight) / 2;
+const isFacingCamera = screenPos.z < 1.0;
+
+// Update UI pin position:
+pinElem.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+pinElem.style.display = isFacingCamera ? 'block' : 'none';
+```
+
+## 15. Fullscreen Kinetic Menu Overlay
+
+```tsx
+<div className="fixed inset-0 z-50 flex flex-col justify-between p-12 bg-[#060709]/95 backdrop-blur-3xl text-white">
+  <div className="flex justify-between items-center">
+    <span className="text-xs font-mono tracking-widest text-zinc-400">DIRECTORY</span>
+    <button onClick={onClose} className="px-4 py-2 rounded-full border border-white/20 text-xs font-mono">CLOSE ✕</button>
+  </div>
+  <nav className="flex flex-col gap-4 my-auto">
+    {links.map((link) => (
+      <a key={link.num} href={link.href} className="group flex items-baseline gap-6 text-6xl font-extralight uppercase text-zinc-400 hover:text-white transition-all">
+        <span className="text-sm font-mono text-cyan-400">{link.num}</span>
+        <span className="group-hover:translate-x-4 transition-transform">{link.label}</span>
+      </a>
+    ))}
+  </nav>
+</div>
+```
+
+## 16. Zero-Dependency Web Audio Synthesizer
+
+Play tactile sci-fi UI clicks and whooshes in modern browsers with pure Web Audio:
+
+```js
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+export function playTick() {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(1200, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.03);
+  gain.gain.setValueAtTime(0.04, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.03);
+}
 ```
 
 ---

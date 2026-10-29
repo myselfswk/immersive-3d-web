@@ -1,15 +1,24 @@
 # immersive-3d-web (Antigravity Skill)
 
-Build award-quality, luxury, buttery-smooth 3D websites with **Next.js App Router** (or Vite), Three.js, React Three Fiber, GSAP ScrollTrigger, Lenis smooth scroll, and PBR materials.
+Build award-winning, buttery-smooth interactive 3D websites for **any domain** (Personal Portfolios like [landonorris.com](https://landonorris.com/), Tech Startups, Luxury Products, Architecture, Fashion, Creative Agencies, Automotive).
 
-## Features
-- **Next.js App Router as Primary Citizen**: Never overwrites existing projects; provides seamless client/server component architecture (`ssr: false` for WebGL, server components for SEO).
-- **Awwwards-Caliber Automotive Showrooms**: Floating glassmorphic pill navbars, telemetry HUDs, live paint configurators, and studio 3-point lighting.
-- **Production Asset Pipeline**:
-  - `bash scripts/download-car-model.sh`: Downloads official 1.6MB multi-part sports car GLB + contact shadow map.
-  - `bash scripts/scaffold-nextjs.sh`: Injects luxury 3D components directly into Next.js.
-  - `bash scripts/optimize-model.sh`: 10x–50x GLB compression with glTF-Transform.
-- **The 8 Unbreakable Laws**: Unified render loops, frame-rate-independent damping (`MathUtils.damp`), performance budgets, and strict bans on low-level AI clichés (no toy box cars, no raw rectangular navbars).
+Powered by **Next.js App Router**, Three.js, React Three Fiber, GSAP ScrollTrigger, Lenis smooth scroll, PBR shaders, and Web Audio.
+
+## Complete Multi-Section Architecture (Awwwards SOTD Standard)
+Unlike superficial single-hero demos, this skill builds complete flagship digital experiences:
+- **Cinematic Preloader & Splash Screen**: Telemetry counter (00% → 100%), sound authorization prompt, and dual-curtain vertical wipe.
+- **Global Header**: Floating glassmorphic pill navbar with audio toggle, section tracker (`BEAT // 01`), and menu trigger.
+- **Fullscreen Kinetic Menu**: Full-screen overlay with oversized typography and magnetic hover states.
+- **Universal 3D Engine**: Scroll-choreographed camera rails moving through 5+ narrative beats. Supports any 3D asset (`/models/hero.glb`) or renders an iridescent cyber kinetic gimbal core with ambient particle vortex.
+- **3D Interactive Stage & Hotspots**: User drag/orbit with spring damping, render mode toggles (PBR, Cyber Wireframe, Hologram), and real-time 3D coordinate-projected UI pins (`vector.project(camera)`).
+- **Tactile Web Audio API Synthesizer**: Zero-dependency procedural sound effects (sub-bass hum, high-tech UI ticks, swooshes).
+- **Comprehensive Narrative Sections**:
+  1. `Hero` (Oversized kinetic typography & masked entrance)
+  2. `Manifesto` (Editorial split-text brand narrative)
+  3. `3D Spatial Inspector` (Interactive 360° stage with telemetry pins)
+  4. `Telemetry Bento Grid` (Precision metric cards)
+  5. `The Archive` (Chronological career / project timeline)
+  6. `Dispatch / Outro & Footer` (Cinematic finale pull-back with magnetic CTA)
 
 ## Quick Start (Next.js)
 ```bash
@@ -17,6 +26,8 @@ Build award-quality, luxury, buttery-smooth 3D websites with **Next.js App Route
 bash <path-to-skill>/scripts/scaffold-nextjs.sh .
 npm run dev
 ```
+
+*(Optional automotive model: `bash <path-to-skill>/scripts/download-car-model.sh public`)*
 
 ## Quick Start (Vite Standalone)
 ```bash

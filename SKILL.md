@@ -1,115 +1,109 @@
 ---
 name: immersive-3d-web
-description: Build award-quality, buttery-smooth, luxury 3D websites (Next.js App Router, Three.js, React Three Fiber, WebGL/WebGPU, GSAP ScrollTrigger, Lenis smooth scroll, PBR materials, GLB models, post-processing). Use this skill whenever the user asks for a 3D website, WebGL landing page, luxury car/automotive showcase, 3D configurator, interactive 3D hero, scroll-animated 3D scene, product showcase, 3D portfolio, "Awwwards-style" or "immersive" site — even if they never explicitly say "skill", "WebGL", or "Three.js". Covers art direction, Next.js architecture, car models, studio lighting, scroll choreography, performance budgets, and QA.
+description: Build award-winning, buttery-smooth, interactive 3D websites for ANY domain (Personal Portfolios like landonorris.com, Tech Startups, Luxury Products, Architecture, Fashion, Creative Agencies, Automotive). Full Next.js App Router architecture with cinematic preloaders, splash screens, fullscreen kinetic menus, scroll-choreographed 3D camera rails, interactive 3D spatial inspectors, coordinate-projected hotspots, telemetry bento grids, and Web Audio. Covers Three.js, React Three Fiber, GSAP ScrollTrigger, Lenis smooth scroll, PBR shaders, and Awwwards Site of the Day standards.
 ---
 
-# Immersive 3D Web
+# Immersive 3D Web Studio
 
-You are building a 3D website that feels **luxurious, designed, fast, and inevitable** — an Awwwards Site of the Year digital flagship, not a toy AI demo. Smoothness and art direction are the product. A beautiful scene at 30 fps loses to an impeccably lit scene at a locked 60 fps.
+You are building an award-winning digital flagship (Awwwards Site of the Day / FWA / `landonorris.com` caliber) — a **complete, multi-section interactive 3D website**, not a superficial hero widget or single-car demo.
 
-## The 8 laws (never break these)
+## The 8 Universal Laws (Never break these)
 
-1. **Next.js first, never overwrite projects.** If the project is Next.js (or if the user asks for Next.js), build natively inside Next.js App Router. Never run a vanilla Vite script over an existing framework repo.
-2. **No Frankenstein toy models.** Never attempt to build complex physical vehicles, watches, or industrial products out of primitive `BoxGeometry` or `CylinderGeometry` meshes. That looks like amateur low-level AI output. Always use an optimized, production-grade `.glb` model (run `bash scripts/download-car-model.sh` for automotive) with multi-part PBR materials and contact shadow planes. If the brief is purely abstract, render elegant aerodynamic wind-tunnel streamlines or laser wireframes, never toy blocks.
-3. **Studio lighting does 70% of "luxury".** Metallic surfaces, car paint, and glass look like cheap plastic without reflections. Always use:
-   - ACESFilmic or AgX tone mapping (`renderer.toneMapping = THREE.ACESFilmicToneMapping`).
-   - 3-point studio lighting + soft top softbox + color-accented rim light (electric cyan, crimson, or champagne gold).
-   - `MeshPhysicalMaterial` for car paint with `clearcoat = 1.0`, `clearcoatRoughness = 0.03`, `metalness = 0.9–1.0`, and `roughness = 0.12–0.2`.
-   - Contact shadow plane (`car_ao.png`) or soft ground shadow so objects are anchored to the floor.
-4. **Floating glassmorphic UI, zero AI clichés.** The navigation and HUD must look like Porsche, Rimac, or Polestar:
-   - Floating glassmorphic pill navbar: `backdrop-blur-xl bg-black/60 border border-white/10 rounded-full px-6 py-3.5`.
-   - Editorial typography with generous letter-spacing (`tracking-[0.25em] text-xs uppercase`).
-   - Telemetry HUD badges (`0-100 KM/H: 1.74s`, `SYS // 800V ONLINE`).
-   - Micro-interactions: interactive paint swatches, camera view transitions, and smooth hover underlines.
-5. **One render loop.** One `requestAnimationFrame` source (use `gsap.ticker`). Lenis smooth scroll, camera damping, and `renderer.render` all synchronize together. Never run independent loops fighting each other.
-6. **Scroll is the timeline.** Scroll position → one smoothed `progress` value → camera, uniforms, and DOM beats. Damp all inputs via frame-rate-independent damping (`THREE.MathUtils.damp`).
-7. **Budget before beauty.** Cap DPR (`Math.min(devicePixelRatio, 2)`). Keep draw calls $\le 100$ desktop, $\le 40$ mobile. Triangles $\le 1.5\text{M}$ desktop, $\le 300\text{k}$ mobile. Total GLB weight $\le 2\text{MB}$.
-8. **Real HTML for real content.** Headings, copy, and CTAs live in semantic DOM for SEO and accessibility. The WebGL canvas is `aria-hidden` background decoration.
+1. **A Complete Website, Never Just a Hero.** Every project must ship the complete standard architecture:
+   - **Cinematic Preloader & Splash Screen**: Telemetry counter (00% → 100%), sound toggle prompt, and dual-curtain reveal transition.
+   - **Floating Navbar & Fullscreen Overlay Menu**: Audio toggle, section indicator (`BEAT // 01`), and a fullscreen kinetic typography menu overlay.
+   - **Multi-Section Scroll Story**: Hero → Manifesto/Story → 3D Interactive Spatial Inspector → Telemetry Bento Grid → Project/Career Archive → Outro & Contact CTA + Footer.
+2. **Universal & Domain-Agnostic.** This skill builds for **any domain**:
+   - **Athletes & Creators** (e.g. `landonorris.com` style: racing telemetry, 3D helmet/equipment showcase, career archive, high-voltage neon).
+   - **Tech & AI Startups** (quantum cores, spatial data landscapes, LiDAR point clouds).
+   - **Luxury Products** (watches, jewelry, industrial design, audio hardware).
+   - **Architecture & Real Estate** (spatial pavilions, structural lighting).
+   - **Creative Portfolios & Agencies** (interactive 3D artifacts, project reels).
+3. **Interactive 3D Stage with Screen-Projected Hotspots.** Don't just let the 3D object sit passively. Provide:
+   - Inertial drag/orbit rotation (`THREE.MathUtils.damp`).
+   - 3D-to-2D projected coordinate pins (`vector.project(camera)`) that pulse on the model and open telemetry drawers.
+   - Shading Mode Switcher (PBR Photorealistic, Cyber Wireframe, X-Ray Hologram).
+4. **Next.js First-Class Architecture.** Always build inside Next.js App Router with Tailwind CSS:
+   - Canvas dynamically imported with `ssr: false` to guarantee 0 hydration errors.
+   - Real semantic HTML for text, headings, and CTAs (SEO, accessibility, screen readers).
+   - Never wipe out Next.js configurations. Use `scripts/scaffold-nextjs.sh`.
+5. **Acoustic Design / Web Audio.** Top sites (like Lando Norris) feature tactile sound design. Provide a zero-dependency Web Audio API synthesizer for UI ticks, swooshes, and ambient sub-bass hum with an opt-in toggle (`components/AudioController.ts`).
+6. **Scroll is the Master Timeline.** Scroll position drives the camera through 5+ narrative keyframe beats via `gsap.ticker` or damped scroll interpolation. Never run conflicting independent loops.
+7. **Studio Lighting & ACES Tone Mapping.** Tone mapping (`ACESFilmicToneMapping`) + 3-point studio softbox + colored silhouette rim lights (Cyber Cyan `#00f0ff` or Lando Volt `#d2ff00`) + ground contact shadow plane.
+8. **Budget Before Beauty.** Lock 60 FPS. Keep draw calls $\le 100$ desktop, $\le 40$ mobile; triangles $\le 1.5\text{M}$; hero assets $\le 2\text{MB}$.
+
+---
+
+## The 6 Standard Sections (Full Website Architecture)
+
+| Section | Beat | Purpose & 3D Behavior |
+|---|---|---|
+| **0. Preloader** | Enter | Telemetry 0–100% counter, sound prompt, dual-curtain vertical wipe revealing the site |
+| **1. Hero** | Beat 0 | Front 3/4 hero presentation with pointer parallax, masked display typography, scroll prompt |
+| **2. Manifesto** | Beat 1 | Sweeping orbital camera move, high-contrast split typography, brand core values |
+| **3. 3D Stage** | Beat 2 | Direct user orbit drag, shading toggles (PBR/Wireframe/Hologram), coordinate-projected hotspots |
+| **4. Bento Grid** | Beat 3 | High-angle camera framing, 4-card telemetry specs grid with metric units |
+| **5. Archive** | Beat 4 | Chronological career/project timeline rows with hover micro-interactions |
+| **6. Dispatch** | Beat 5 | Dramatic wide pull-back finale, magnetic commission/contact CTA, and minimalist footer |
+
+---
 
 ## Workflow
 
-### Phase 0 — Brief & Direction Card
-State your assumptions or brief in a **Direction Card**:
+### Phase 0 — The Direction Card
+State the design direction in 8 lines:
 ```
-Concept:      AETHELON APEX-01 — Ultra-Luxury Electric Hypercar Showcase
-Palette:      bg #060709 · car #0a0d12 (Obsidian) · accent #00f0ff (Cyber Cyan) · text #ffffff
+Concept:      [e.g. Lando Norris Athlete Portfolio / Quantum Hardware Showcase]
+Palette:      bg #060709 · surface #0e1117 · accent #00f0ff (or #d2ff00 Volt) · text #ffffff
 Type:         Editorial Display (Syne / Geist) + Monospace Telemetry
-Light Rig:    Studio Softbox Top + Warm Front 3/4 + Cyan Rim Silhouette
-Hero Object:  Optimized GLB Hypercar with metallic clearcoat PBR paint & contact shadow
-Camera Rails: Front 3/4 (Hero) → Side Profile (Aero) → Rear Wing (Propulsion) → Top Down
-Signature:    Live paint customizer, camera view presets, and telemetry HUD
+Hero Object:  [3D Kinetic Artifact / Custom GLB / Athlete Helmet / Product]
+Light Rig:    Studio Top Softbox + Front Key + Electric Rim Silhouette
+Audio:        Web Audio Synthesizer (UI clicks & whooshes)
+Signature:    Dual-curtain preloader, 3D coordinate hotspots, and fullscreen kinetic menu
 ```
 
-### Phase 1 — Stack Decision
-| Situation | Use |
-|---|---|
-| **Next.js App (Default / Recommended)** | **Next.js App Router + Tailwind CSS + Three.js (`ssr: false`) + Lenis + GSAP** (see `assets/nextjs-starter/`) |
-| **Existing React / Next.js app with R3F** | **React Three Fiber (v9 for React 19) + @react-three/drei** |
-| **Standalone micro-landing page** | **Vite + vanilla Three.js + GSAP + Lenis** (`assets/starter/`) |
-
-### Phase 2 — 3D Asset Sourcing
-- **For Cars / Automotive**: Run `bash scripts/download-car-model.sh <public-dir>`. This immediately fetches the battle-tested, production-ready 1.6MB sports car GLB (`car.glb`) and contact shadow map (`car_ao.png`).
-- **For Custom Artist Models**: Run `bash scripts/optimize-model.sh input.glb public/models/hero.glb` (compresses 10x–50x with glTF-Transform, Draco/Meshopt, and KTX2/WebP).
-- **If No 3D Model Exists**: Build an abstract aerodynamic wind-tunnel laser particle stream or glowing chassis hologram. **Never** assemble a fake car out of boxes/cylinders.
-
-### Phase 3 — Scaffolding
-- **For Next.js**: Run `bash scripts/scaffold-nextjs.sh <target-dir>` to inject the luxury showroom components (`Navbar.tsx`, `CarCanvas.tsx`, `ConfiguratorHUD.tsx`, `app/page.tsx`).
-- **For Standalone Vite**: Run `bash scripts/scaffold.sh <target-dir>` (only when not in Next.js).
-
-### Phase 4 — Materials & Studio Lighting
-Set up physically realistic automotive materials in `CarCanvas.tsx`:
-```javascript
-// Metallic Clearcoat Car Paint
-const paintMat = new THREE.MeshPhysicalMaterial({
-  color: new THREE.Color('#0a0d12'),
-  metalness: 0.95,
-  roughness: 0.14,
-  clearcoat: 1.0,
-  clearcoatRoughness: 0.03,
-});
-
-// Ground Contact Shadow
-const shadowMat = new THREE.MeshBasicMaterial({
-  map: shadowTexture,
-  blending: THREE.MultiplyBlending,
-  transparent: true,
-  opacity: 0.9,
-});
+### Phase 1 — Scaffolding (Next.js)
+Run:
+```bash
+bash scripts/scaffold-nextjs.sh <target-dir>
 ```
+Injects all core components:
+- `components/Preloader.tsx` (Cinematic curtain splash screen)
+- `components/Navbar.tsx` (Floating pill header with sound toggle & section indicator)
+- `components/FullscreenMenu.tsx` (Kinetic oversized typography menu)
+- `components/SceneCanvas.tsx` (Universal 3D engine with camera rails & hotspots)
+- `components/AudioController.ts` (Zero-file Web Audio synthesizer)
+- `app/page.tsx` (Complete 6-section narrative layout)
 
-### Phase 5 — Floating Luxury UI & Telemetry HUD
-Implement:
-1. **Floating Pill Navbar**: Centered glassmorphic container with brand mark, tracked links, 800V telemetry indicator, and a sleek commission CTA.
-2. **Interactive Configurator HUD**: Paint swatch selector (Obsidian, Cyan, Titanium, Crimson) and instant camera view buttons (Front, Profile, Rear, Top).
-3. **Editorial Typography**: Large high-contrast headlines with wide tracking (`tracking-[-0.03em]`), fine hairline borders (`border-white/10`), and monospaced telemetry figures.
+*(Optional automotive model: `bash scripts/download-car-model.sh <public-dir>`)*
 
-### Phase 6 — Performance & QA
-Before finishing, run through `references/performance.md` and `references/qa-checklist.md`:
-- Check `renderer.info.render.calls` ($\le 100$).
-- Verify model size is $\le 2\text{MB}$.
-- Test responsive resizing and mobile viewports (`100svh`).
-- Test graceful fallback if WebGL fails.
+### Phase 2 — Asset Integration
+- **Drop Any Custom 3D Model**: Place any optimized GLB in `public/models/hero.glb`. `SceneCanvas.tsx` automatically detects, centers, and lights it.
+- **Or Keep the Procedural Kinetic Core**: If no model is provided, the starter renders a stunning cyberpunk kinetic gimbal core with iridescent PBR shaders and particle streams.
 
-## Anti-patterns (reject these on sight)
+### Phase 3 — Customize Narrative & Telemetry
+Edit `app/page.tsx` to customize:
+1. Hero headline & subhead.
+2. Manifesto copy.
+3. Hotspot labels and telemetry drawers in `components/SceneCanvas.tsx`.
+4. Bento grid metrics and units.
+5. Archive milestones and contact dispatch email.
 
-- ❌ Assembling fake cars/watches from `BoxGeometry` and `CylinderGeometry`.
-- ❌ Overwriting Next.js projects with Vite templates.
-- ❌ Blocky, rectangular full-width navbars with plain unstyled blue links.
-- ❌ Missing contact shadow planes (causes 3D models to awkwardly float in space).
-- ❌ Missing tone mapping or ambient lighting (leaves metallic materials looking like flat plastic).
-- ❌ Putting 60 FPS scroll updates into React `useState` (causes 60 re-renders/sec).
-- ❌ Uncompressed 30MB 3D models or 4K uncompressed PNG textures.
-- ❌ Loud autoplaying audio or hijacking native page scroll.
+### Phase 4 — QA & Verification
+Follow `references/qa-checklist.md`:
+- Test curtain preloader dismissal with and without audio.
+- Test 3D drag inertia in the Inspector stage.
+- Test fullscreen overlay menu links and smooth scrolling.
+- Verify 60 FPS and 0 console warnings with `npm run build`.
 
-## Reference Map
+---
 
-| File | Read when |
-|---|---|
-| `references/art-direction.md` | Designing luxury automotive flagships, glassmorphic navbars, typography, and light rigs |
-| `references/recipes.md` | Adding car paint configurators, contact shadows, wheel spin, and camera presets |
-| `references/stack.md` | Setting up Next.js App Router with Three.js / R3F, React 19 compatibility, and SSR bypass |
-| `references/performance.md` | Reviewing draw call budgets, texture compression, and mobile tiering |
-| `references/qa-checklist.md` | Pre-delivery testing (leaks, fallbacks, throttled mobile performance) |
-| `scripts/download-car-model.sh` | Fetching the production 1.6MB sports car GLB + contact shadow map |
-| `scripts/scaffold-nextjs.sh` | Ingesting the luxury 3D showroom into a Next.js project |
-| `scripts/optimize-model.sh` | Compressing heavy 3D GLBs with glTF-Transform |
+## Anti-Patterns (Reject on sight)
+
+- ❌ Single-hero widget demos with no preloader, no menu, and no secondary content sections.
+- ❌ Hardcoding skills exclusively for cars (must be universal for athletes, products, tech, portfolios).
+- ❌ Primitive toy box/cylinder geometry.
+- ❌ Overwriting existing framework configurations with Vite.
+- ❌ Storing high-frequency scroll or mouse coordinates in React `useState`.
+- ❌ Missing contact shadow plane (makes 3D models float awkwardly).
+- ❌ Clunky rectangular headers with plain unstyled links.

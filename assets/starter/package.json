@@ -1,0 +1,21 @@
+{
+  "name": "immersive-3d-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "report": "node scripts/report-size.mjs"
+  },
+  "dependencies": {
+    "gsap": "latest",
+    "lenis": "latest",
+    "postprocessing": "latest",
+    "three": "latest"
+  },
+  "devDependencies": {
+    "vite": "latest"
+  }
+}

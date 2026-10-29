@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07080b" />
+  <title>Aurora — an immersive 3D experience</title>
+  <meta name="description" content="Replace this with your real description." />
+  <meta property="og:title" content="Aurora" />
+  <meta property="og:description" content="Replace this with your real description." />
+  <!-- Preload your display font here, e.g.:
+  <link rel="preload" href="/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin /> -->
+</head>
+<body>
+  <div id="loader" role="status" aria-live="polite">Loading</div>
+  <div class="progress" aria-hidden="true"><i></i></div>
+
+  <header class="nav">
+    <a href="#top">Aurora</a>
+    <nav aria-label="Primary">
+      <a href="#one">Form</a>
+      <a href="#two">Motion</a>
+      <a href="#three">Light</a>
+      <a href="#cta">Start</a>
+    </nav>
+  </header>
+
+  <div class="index" aria-hidden="true"><span id="idx">01</span> / <span id="idx-total">05</span></div>
+
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <main id="story">
+    <section class="panel hero" id="top" data-beat>
+      <p class="label" data-intro>Immersive web — 2026</p>
+      <h1 data-split>Shape that<br />responds to you.</h1>
+      <div class="copy">
+        <p data-intro>A scroll-driven 3D story built for silky 60&nbsp;fps on every screen.</p>
+        <a class="cta" href="#cta" data-intro>Get started →</a>
+        <div class="scroll-hint" data-intro>Scroll</div>
+      </div>
+    </section>
+
+    <section class="panel right" id="one" data-beat>
+      <div class="copy">
+        <p class="label" data-reveal>01 / Form</p>
+        <h2 data-split>Living geometry.</h2>
+        <p data-reveal>Procedural shaders deform a single mesh in real time — tiny download, infinite detail, zero compromise on sharpness.</p>
+      </div>
+    </section>
+
+    <section class="h-wrap" id="two" data-beat aria-label="Motion">
+      <div class="h-track">
+        <div class="h-intro">
+          <p class="label">02 / Motion</p>
+          <h2 data-split>Weight and inertia.</h2>
+          <p>Scroll drives a camera rail through damped, frame-rate independent motion. It feels heavy in the right way.</p>
+        </div>
+        <article class="card"><span class="num">01</span><h3>Damped</h3><p>Every input is smoothed with frame-rate independent damping.</p></article>
+        <article class="card"><span class="num">02</span><h3>Choreographed</h3><p>Each section is a beat: camera, color and shape move together.</p></article>
+        <article class="card"><span class="num">03</span><h3>Adaptive</h3><p>Resolution and effects step down before the frame rate does.</p></article>
+        <article class="card"><span class="num">04</span><h3>Accessible</h3><p>Real HTML, keyboard friendly, reduced-motion respected.</p></article>
+      </div>
+    </section>
+
+    <section class="panel right" id="three" data-beat>
+      <div class="copy">
+        <p class="label" data-reveal>03 / Light</p>
+        <h2 data-split>Color as a signal.</h2>
+        <p data-reveal>Image-based lighting, a key and a rim carve the object out of the dark. Palette, light, and type share one system.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="cta" data-beat>
+      <div class="copy">
+        <p class="label" data-reveal>04 / Begin</p>
+        <h2 data-split>Make it yours.</h2>
+        <p data-reveal>Swap the palette in theme.js, drop a GLB into public/models/hero.glb, rewrite the copy. The performance guardrails are already on.</p>
+        <a class="cta" href="mailto:hello@example.com" data-reveal>Say hello →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 Aurora</footer>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

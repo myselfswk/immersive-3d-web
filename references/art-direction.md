@@ -3,13 +3,13 @@
 ## Contents
 1. The Direction Card
 2. Concept library
-3. Palettes
-4. Typography
-5. Light rigs
-6. Camera and composition
-7. Motion personality
-8. Page structure template
-9. Avoiding the generic look
+3. Luxury Automotive & High-End Flagship Standard (Awwwards / Porsche / Rimac)
+4. Palettes
+5. Typography & UI Structure
+6. Light rigs
+7. Camera and composition
+8. Motion personality
+9. Avoiding the generic AI look
 
 ## 1. The Direction Card
 
@@ -19,93 +19,121 @@ Write this before any code. Keep it to ~10 lines.
 Concept:      one sentence (what is this site, what should the visitor feel)
 Palette:      bg #____  surface #____  text #____  accent #____  (optional accent-2)
 Type:         display ____ / body ____ (self-hosted, variable)
-Hero object:  what is on screen at scroll 0
-Light rig:    e.g. cool env + warm key + magenta rim
+Hero object:  what is on screen at scroll 0 (must be real GLB asset or aerodynamic laser streamline)
+Light rig:    e.g. overhead softbox + warm key + electric cyan rim
 Motion:       slow/heavy | snappy/precise | playful/springy | liquid/organic
-Signature 1:  hero (first 3 seconds)
-Signature 2:  mid-story reveal (the "oh!" moment)
-Signature 3:  finale + CTA
+Signature 1:  hero (first 3 seconds, floating glassmorphic pill navbar & camera entrance)
+Signature 2:  mid-story reveal (interactive paint customizer / exploded chassis)
+Signature 3:  finale + CTA (order allocation / commission)
 ```
 
 ## 2. Concept library (pick or remix)
 
 | Concept | Scene idea | Scroll story |
 |---|---|---|
-| **Product hero** (device, bottle, sneaker, watch) | Single GLB on a seamless studio floor, env-lit, subtle reflections | Orbit → exploded view → close-up detail → CTA |
-| **Liquid / blob brand** | Noise-displaced iridescent sphere (starter) | Blob morphs per section, color shifts per beat |
-| **Particle universe** | GPU points forming shapes (logo, planet, galaxy) | Particles disperse → reform into next shape |
-| **Architectural / spatial** | Corridor or room, camera on a rail | Walk-through; each room = a section |
-| **Abstract portfolio** | Floating planes with project images; hover distortion | Gallery with velocity-based warp |
-| **Data landscape** | Terrain/bars/globe from real data | Camera tours key regions; DOM callouts |
-| **Tunnel / flight** | Procedural tunnel, fog, speed lines | Speed ∝ scroll velocity |
-| **Mechanical / exploded** | Parts separate along axes | Scrub explode amount with scroll |
+| **Luxury Automotive** | Real GLB hypercar (`scripts/download-car-model.sh`), metallic clearcoat paint, contact shadow, floor grid | Front 3/4 → aerodynamic profile → rear wing & diffuser → top-down aero |
+| **Product hero** (device, bottle, watch) | Single GLB on a seamless studio floor, env-lit, subtle reflections | Orbit → exploded view → close-up detail → CTA |
+| **Liquid / energy core** | Noise-displaced iridescent sphere or solid-state battery core | Morph per section, color shifts per beat |
+| **Particle universe** | GPU points forming aerodynamic wind-tunnel streamlines | Streamlines flow across chassis with velocity |
+| **Architectural / spatial** | Minimalist concrete/obsidian pavilion, camera on a rail | Walk-through; each space = a section |
 
 Choose one hero concept. A site with 3 concepts feels like none.
 
-## 3. Palettes (starting points; adapt to brand)
+---
+
+## 3. Luxury Automotive & High-End Flagship Standard
+
+Top-tier automotive digital experiences (Porsche Mission X, Rimac Nevera, Polestar, Lotus Evija) rely on **extreme restraint, cinematic contrast, and precision engineering cues**:
+
+### The Navbar (Floating Glassmorphic Pill)
+- **Never** use a boxy, full-width, solid header with plain text links.
+- **Always** use a floating centered pill header:
+  `backdrop-blur-xl bg-black/60 border border-white/10 rounded-full px-6 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.8)]`
+- **Brand Emblem**: Tracked uppercase (`tracking-[0.3em] font-semibold text-xs md:text-sm`).
+- **Telemetry Pill**: Small pulsing emerald/cyan indicator (`SYS: ONLINE // 800V ARCHITECTURE`).
+- **Ghost Action**: Pill button with micro-glow (`border border-cyan-400/40 bg-cyan-950/20 text-cyan-300`).
+
+### The 3D Vehicle Presentation
+- **Asset Quality**: Use a real, multi-part, optimized GLB (`public/models/car.glb`) with separate body, rims, trim, glass, and wheels. Download with `bash scripts/download-car-model.sh`.
+- **Contact Shadow Plane**: Cars look disconnected and fake if they float in empty space. A transparent contact shadow map (`public/models/car_ao.png`) with `THREE.MultiplyBlending` under the chassis anchors the vehicle to the studio floor.
+- **PBR Car Paint**:
+  ```js
+  new THREE.MeshPhysicalMaterial({
+    color: '#0a0d12',
+    metalness: 0.95,
+    roughness: 0.14,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.03,
+  });
+  ```
+- **Studio Floor**: Dark circular pedestal or subtle perspective grid (`GridHelper` with low opacity `0.15–0.25`).
+
+### The Telemetry & Configurator HUD
+- Pinned bottom-center floating glass card providing:
+  1. **Telemetry specs**: 0–100 km/h (e.g. 1.74s), Top Speed (412 km/h), Peak Output (2,050 HP).
+  2. **Interactive Livery Selector**: Swatches (Obsidian Black, Cyber Cyan, Liquid Titanium, Apex Crimson) updating the `MeshPhysicalMaterial` in real time.
+  3. **Camera View Presets**: One-click smooth camera pan between `Front 3/4`, `Side Profile`, `Aero Wing`, and `Top Down`.
+
+---
+
+## 4. Palettes (starting points; adapt to brand)
 
 | Mood | bg | surface | text | accent |
 |---|---|---|---|---|
-| Luxe dark | `#07080b` | `#111319` | `#eef0f5` | `#c8a96a` |
-| Electric | `#05060f` | `#0e1022` | `#f2f4ff` | `#6c5cff` + `#00e0c6` |
-| Soft pastel | `#f4efe9` | `#ffffff` | `#1b1a1f` | `#ff6b4a` |
-| Acid brutalist | `#0b0b0b` | `#161616` | `#f5f5f0` | `#d4ff00` |
-| Deep ocean | `#03121c` | `#082433` | `#e6f4f7` | `#2de2c8` |
+| **Luxe Hypercar** | `#060709` | `#0f1218` | `#ffffff` | `#00f0ff` (Cyber Cyan) + `#cfd6df` (Titanium) |
+| **Apex Crimson** | `#080607` | `#140d10` | `#f7f4f5` | `#e50914` (Rosso Corsa) + `#ff7300` |
+| **Obsidian Gold** | `#07080b` | `#111319` | `#eef0f5` | `#c8a96a` (Champagne Gold) |
+| **Electric Minimalist** | `#05060f` | `#0e1022` | `#f2f4ff` | `#6c5cff` + `#00e0c6` |
 
-Rules: one dominant surface, one accent used sparingly (CTAs, highlights, rim light). Make the **3D scene palette equal the CSS palette** (feed CSS variables into shader uniforms) so the page and canvas feel like one piece.
+Rules: One dominant dark surface, one sharp accent used sparingly (CTAs, rim lights, telemetry dots). Make the **3D lighting palette match the UI palette**.
 
-## 4. Typography
+---
 
-- Pair a **characterful display** face with a quiet body face. Variable fonts, self-hosted woff2, `font-display: swap`, preload the display font.
-- Fluid scale: `font-size: clamp(2.6rem, 7vw + 1rem, 8rem)` for hero; tight letter-spacing (`-0.02em` to `-0.04em`) on large display; line-height 0.95–1.05 for display, 1.5–1.65 body.
-- Display candidates (check licenses): Space Grotesk, Syne, Unbounded, Instrument Serif, Fraunces, Clash Display / General Sans (Fontshare), Satoshi, Inter Tight.
-- Large type + small mono labels (`01 / Intro`) is a reliable "designed" look.
-- Keep text over 3D legible: use `mix-blend-mode: difference` sparingly, or a soft radial scrim, or position copy where the scene is calm.
+## 5. Typography & UI Structure
 
-## 5. Light rigs
+- **Display**: High-contrast, wide-tracked headers (`tracking-[-0.03em]` to `tracking-[0.1em]`, uppercase). Recommended: Syne, Geist, Space Grotesk, Clash Display.
+- **Telemetry & Labels**: Monospaced labels (`font-mono tracking-[0.25em] text-[10px] uppercase text-zinc-400`).
+- **Hairline Borders**: `border border-white/10` throughout cards and HUDs.
+- **Selection**: `selection:bg-cyan-500/30 selection:text-cyan-200`.
 
-Premium look = **environment + key + rim**, tone-mapped.
+---
 
-- **Studio product**: `RoomEnvironment` or custom HDR at `scene.environmentIntensity ≈ 0.6–1`, one `DirectionalLight` key (warm, 2–3), one back/rim light (cool/accent, 3–6) to carve edges.
-- **Moody**: very low env (0.15–0.3), strong colored rim, fog matching bg, bloom threshold high.
-- **Pastel/clean**: high env (1.0+), soft shadows baked into a floor texture, no bloom.
-- Match `scene.background` and `scene.fog` colors to the page bg so the canvas edge disappears.
-- Avoid pure black bg with pure white text at full contrast — go `#07080b` / `#eef0f5`.
+## 6. Light rigs
 
-## 6. Camera and composition
+Premium look = **studio environment + key + rim**, tone-mapped.
 
-- FOV 30–45° for products (flatter, premium) · 50–60° for environments/tunnels. Wide FOV (>70°) looks cheap and distorts.
-- Rule of thirds: put the object off-center and the headline opposite; swap sides each section for rhythm.
-- Depth cues: fog, scale contrast (big near / small far), parallax layers, soft blurred foreground elements.
-- **Mobile**: re-frame, don't just shrink — pull the camera back / raise the object above the text block; consider portrait-specific camera keyframes.
-- Keep a consistent "up" and avoid roll unless it's a deliberate effect.
+- **Studio automotive**:
+  1. Ambient light: low, dark cool tone (`#141c28`, intensity 1.8).
+  2. Overhead Key: Softbox light directly above car (`#ffffff`, intensity 3.2).
+  3. Front-Quarter Key: Soft directional light (`#eef5ff`, intensity 2.5).
+  4. Rim Light: Strong colored light behind the car (`#00f0ff`, intensity 3.8) highlighting body curves.
+  5. Underglow / Point Light: Soft ground glow (`#00e5ff`, intensity 2.0).
+- Tone mapping: `renderer.toneMapping = THREE.ACESFilmicToneMapping`, `renderer.toneMappingExposure = 1.05`.
 
-## 7. Motion personality
+---
+
+## 7. Camera and composition
+
+- FOV 38–45° for vehicles (flatter, cinematic, realistic proportions). Wide FOV (>70°) looks like a fish-eye toy.
+- Damping: Smooth lerp or `THREE.MathUtils.damp()` with $\lambda = 5–7$.
+- Mobile: Raise the car position or reframe camera back so the car stays above the text block.
+
+---
+
+## 8. Motion personality
 
 | Personality | Ease (GSAP) | Duration | Damping λ (`MathUtils.damp`) |
 |---|---|---|---|
-| Cinematic / heavy | `power3.out`, `expo.out` | 1.0–1.6 s | 3–4 |
-| Precise / tech | `power2.out`, `power4.inOut` | 0.6–0.9 s | 6–8 |
-| Playful | `back.out(1.4)`, `elastic.out(1,0.6)` (sparingly) | 0.5–0.9 s | 8–12 |
-| Liquid | `sine.inOut`, noise-driven | 1.2–2.0 s | 2–3 |
+| **Cinematic / Heavy** | `power3.out`, `expo.out` | 1.0–1.6 s | 3–5 |
+| **Precise / Automotive** | `power2.out`, `power4.inOut` | 0.6–0.9 s | 6–8 |
+| **Snappy Tech** | `power2.out` | 0.4–0.7 s | 8–10 |
 
-Principles: stagger (60–120 ms), overlap actions, ease-out for entrances, never linear for UI. Idle motion 5–10× slower than interaction motion.
+---
 
-## 8. Page structure template (scroll story)
+## 9. Avoiding the generic AI look (Absolute Bans)
 
-1. **Hero** (100svh): headline, 1-line sub, primary CTA, 3D hero alive. Preloader hands off into an entrance animation.
-2. **Promise / problem** (100–120svh): one big statement; scene shifts (camera push-in, color shift).
-3. **Feature beats ×3–4** (120–150svh each): label `01`, title, 2 lines, one supporting 3D change per beat.
-4. **Proof**: logos / numbers / quote — calm moment, scene dims or slows.
-5. **Finale + CTA** (100svh): scene resolves into its most beautiful composition; big CTA; footer.
-
-Total ≈ 6–8 screens. Longer pages need a progress indicator and anchor nav.
-
-## 9. Avoiding the generic look
-
-- No default grey material. Every material gets intentional roughness/metalness/color from the palette.
-- No lone rotating cube/torus-knot. Make the object *the brand's* object (or an ownable abstract form).
-- Add **grain + vignette** (tiny cost, big cohesion). Add slight **chromatic aberration** only on fast scroll velocity.
-- Use **negative space**; don't fill every pixel with 3D.
-- Align DOM details to the scene: borders, labels, and counters reflect scroll progress.
-- Test with the 3D layer hidden: the page must still read as a good design. And test with the DOM hidden: the scene must be beautiful alone.
+- ❌ **No toy box/cylinder cars**: Never glue together `BoxGeometry` and `CylinderGeometry` to represent a car. It immediately looks like cheap AI nonsense. Use `download-car-model.sh`.
+- ❌ **No rectangular solid navbars**: Banned. Always use a floating glassmorphic pill header.
+- ❌ **No bright rainbow gradients**: High-end luxury uses stark obsidian/charcoal with a single sharp metallic or photon accent.
+- ❌ **No floating ungrounded meshes**: Always place a contact shadow texture or shadow plane under the car.
+- ❌ **No flat plastic materials**: Always apply `metalness: 0.9` and `clearcoat: 1.0` to automotive paint.

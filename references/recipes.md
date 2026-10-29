@@ -13,6 +13,8 @@ Each recipe is self-contained and respects the skill's rules (one loop, damped i
 8. Mask/clip-path section transitions
 9. Custom cursor (desktop only)
 10. Lens flare / light shafts (cheap)
+11. Luxury Automotive Showroom (PBR Clearcoat Paint + Contact Shadow)
+12. Floating Glassmorphic Pill Navbar with Telemetry Badge
 
 ---
 
@@ -153,6 +155,75 @@ CSS: `.cursor{position:fixed;left:0;top:0;width:14px;height:14px;margin:-7px;bor
 ## 10. Cheap light shafts / flare
 
 A camera-facing additive quad with a radial-gradient texture (or procedural `smoothstep` in a ShaderMaterial), `depthWrite:false`, placed at the rim-light position; scale with `1 + velocity * 0.3`. Far cheaper than god-ray post passes and reads as premium when tinted with the accent color.
+
+## 11. Luxury Automotive Showroom (PBR Clearcoat Paint + Contact Shadow)
+
+Never build cars from boxes. Use `bash scripts/download-car-model.sh` to get `car.glb` and `car_ao.png`.
+
+```js
+// 1. PBR Metallic Car Paint
+const bodyMaterial = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color('#0a0d12'), // Obsidian Black
+  metalness: 0.95,
+  roughness: 0.14,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.03,
+});
+
+// 2. Contact Shadow Plane
+const shadowTex = new THREE.TextureLoader().load('/models/car_ao.png');
+shadowTex.colorSpace = THREE.SRGBColorSpace;
+const shadowMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.7, 5.2),
+  new THREE.MeshBasicMaterial({
+    map: shadowTex,
+    blending: THREE.MultiplyBlending,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
+  })
+);
+shadowMesh.rotation.x = -Math.PI / 2;
+shadowMesh.position.y = 0.01;
+carGroup.add(shadowMesh);
+
+// 3. Wheel Spin on Drag or Scroll
+const wheels = [];
+carModel.traverse((node) => {
+  if (['wheel_fl', 'wheel_fr', 'wheel_rl', 'wheel_rr'].includes(node.name)) {
+    wheels.push(node);
+  }
+});
+// in tick loop:
+wheels.forEach(w => { w.rotation.x += spinSpeed; });
+```
+
+## 12. Floating Glassmorphic Pill Navbar with Telemetry Badge
+
+```tsx
+// Floating Awwwards-tier Pill Header (Next.js / Tailwind CSS)
+<header className="fixed top-0 left-0 w-full z-50 flex justify-center px-4 py-5 pointer-events-none">
+  <nav className="pointer-events-auto flex items-center justify-between gap-10 px-6 py-3 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
+    <div className="flex items-center gap-3">
+      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+      <span className="text-xs font-semibold tracking-[0.3em] uppercase text-white">AETHELON</span>
+    </div>
+    <div className="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.22em] text-zinc-400">
+      <a href="#aero" className="hover:text-white transition-colors">Aero</a>
+      <a href="#powertrain" className="hover:text-white transition-colors">Powertrain</a>
+      <a href="#configurator" className="hover:text-white transition-colors">Atelier</a>
+    </div>
+    <div className="flex items-center gap-3">
+      <span className="text-[10px] font-mono tracking-wider text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-500/20">
+        800V ARCHITECTURE
+      </span>
+      <a href="#configurator" className="px-4 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/20 text-cyan-300 text-[11px] uppercase tracking-[0.18em] hover:bg-cyan-500/10">
+        Commission →
+      </a>
+    </div>
+  </nav>
+</header>
+```
 
 ---
 

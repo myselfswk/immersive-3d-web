@@ -1,162 +1,128 @@
 # Stack reference
 
 ## Contents
-1. Default stack and why
-2. Verify versions first
-3. Vanilla layout
-4. React Three Fiber variant
-5. WebGPU / TSL (optional)
-6. Alternatives and when to use them
-7. Physics, text, audio, extras
-8. Build & deploy config
+1. Primary Stack: Next.js App Router + Three.js
+2. React 19 & Next.js Compatibility Guide
+3. Next.js Luxury Showroom Architecture
+4. React Three Fiber (R3F) Variant
+5. Standalone Vite Variant
+6. 3D Model Pipeline & Decoders
+7. Build & Deploy Config
 
-## 1. Default stack and why
+---
+
+## 1. Primary Stack: Next.js App Router + Three.js
+
+For modern web projects and production sites, **Next.js App Router (Next.js 15/16 + Tailwind CSS + Three.js + GSAP + Lenis)** is the primary, first-class citizen.
 
 | Layer | Pick | Why |
 |---|---|---|
-| Bundler | **Vite** | Instant HMR, `?raw` GLSL imports, tiny output, easy static deploy |
-| 3D | **three** | The standard; biggest ecosystem; stable WebGL2 path |
-| Scroll smoothing | **lenis** | Best-feeling inertial scroll; plays with native scroll + ScrollTrigger |
-| Timeline / DOM motion | **gsap** (+ ScrollTrigger) | Precise scrubbing, pinning, matchMedia; free to use |
-| Post-processing (optional) | **postprocessing** (pmndrs) | Merges effects into fewer passes than three's EffectComposer; better perf |
-| Models | **GLB** via `GLTFLoader` + Draco/Meshopt + KTX2 | Smallest, fastest pipeline |
-| Types (optional) | TypeScript | Worth it for >1 developer or >1000 lines |
+| **Framework** | **Next.js App Router** | Full-stack power, server-side SEO preservation, image optimization |
+| **Styling** | **Tailwind CSS (v4)** | Rapid, modern glassmorphic UI (`backdrop-blur-xl`, `border-white/10`) |
+| **3D Engine** | **Three.js** | Industry standard, WebGL2/WebGPU support, complete control of render loop |
+| **Animation** | **GSAP (ScrollTrigger)** | Camera lerping, timeline scrubbing, and DOM reveals |
+| **Scroll Engine** | **Lenis** | Buttery smooth inertial scrolling that doesn't fight native scroll |
+| **3D Asset Pipeline** | **GLB via Draco / KTX2** | Lightweight 1–2 MB multi-part models with PBR materials |
 
-Vanilla three is the default for **scroll-story marketing sites**: smaller bundle, no React reconciliation overhead, direct control of the single render loop.
+---
 
-## 2. Verify versions first
+## 2. React 19 & Next.js Compatibility Guide
 
-Training knowledge goes stale. Before writing imports:
+When working with Next.js 15/16 and React 19:
 
-```bash
-npm view three version
-npm view gsap version
-npm view lenis version
-npm view postprocessing version
-npm view @react-three/fiber version
-npm view @react-three/drei version
+### The Two 3D Integration Strategies in Next.js:
+
+#### Strategy A: Direct Three.js Canvas in Client Component (Recommended for locked 60fps & React 19)
+- **Why**: React 19 has breaking changes that sometimes cause peer-dependency warnings with older R3F packages. Wrapping a Three.js canvas inside a Next.js `'use client'` component (`components/CarCanvas.tsx`) gives you:
+  - 100% immunity to React version mismatches.
+  - Zero React reconciliation overhead during 60 FPS animations.
+  - Direct access to `renderer.toneMapping`, custom GLSL, and GSAP tickers.
+- **SSR Isolation**:
+  Always import dynamically in your server page:
+  ```tsx
+  // app/page.tsx
+  import dynamic from 'next/dynamic';
+  const CarCanvas = dynamic(() => import('@/components/CarCanvas'), { ssr: false });
+  ```
+
+#### Strategy B: React Three Fiber (R3F v9)
+- If you prefer declarative JSX components (`<Canvas>`, `<mesh>`, `<Environment>`):
+  - With React 19, you **MUST** install `@react-three/fiber@^9.0.0` or `@react-three/fiber@rc`.
+  - Install `@react-three/drei` and `@react-three/postprocessing`.
+  - Do **not** store high-frequency scroll or mouse coordinates in React `useState`. Use mutable refs or external stores (`zustand`) read inside `useFrame`.
+
+---
+
+## 3. Next.js Luxury Showroom Architecture
+
+Matches `assets/nextjs-starter/`:
+
 ```
-
-Facts that have been stable and are worth checking in the installed version's docs/changelog:
-- Import addons from `three/addons/...` (alias of `three/examples/jsm/...`).
-- Lenis npm package is `lenis` (older: `@studio-freight/lenis`). Import: `import Lenis from 'lenis'`.
-- GSAP plugins ship inside the `gsap` package: `import { ScrollTrigger } from 'gsap/ScrollTrigger'`.
-- `renderer.outputColorSpace = THREE.SRGBColorSpace` is default; textures use `.colorSpace`, not `.encoding`.
-- R3F v9 pairs with React 19; R3F v8 pairs with React 18. Match them.
-
-If the project already pins versions, **respect the pins**.
-
-## 3. Vanilla layout (matches `assets/starter`)
-
-```
-index.html
+app/
+├── layout.tsx         # Global dark theme (#060709), font preloading, metadata
+└── page.tsx           # Server component: editorial layout, specs, dynamic 3D import
+components/
+├── Navbar.tsx         # Floating glassmorphic pill header (Awwwards standard)
+├── CarCanvas.tsx      # Client 3D engine: studio lighting, GLTF loader, PBR paint, camera rails
+└── ConfiguratorHUD.tsx # Interactive paint swatches (Obsidian, Cyan, Titanium) + camera presets
 public/
-  draco/            # copied from node_modules/three/examples/jsm/libs/draco/gltf
-  basis/            # copied from node_modules/three/examples/jsm/libs/basis
-  models/           # optimized .glb
-  textures/         # .ktx2 / .webp
-  fonts/            # self-hosted woff2
-src/
-  main.js  scene.js  scroll.js  quality.js  loaders.js  style.css
-  shaders/
+├── models/
+│   ├── car.glb        # Optimized sports car GLB (downloaded with download-car-model.sh)
+│   └── car_ao.png     # Contact shadow map
+└── draco/             # Offline Draco decoders
 ```
 
-Pattern: `scene.js` exports `createWorld(canvas, quality)` returning `{ update(dt, state), resize(w,h), dispose(), setQuality(q) }`. `scroll.js` exports `createScroll(onProgress)` returning `{ lenis, state }`. `main.js` is the only file that knows both. This separation lets you swap the scene without touching scroll, and vice versa.
+### Safety Rule for Agents:
+**NEVER run `scripts/scaffold.sh` on an existing Next.js project.** Running `scaffold.sh` wipes out Next.js configurations. For Next.js projects, always run `scripts/scaffold-nextjs.sh <project-dir>` or inject the components directly.
 
-## 4. React Three Fiber variant
+---
 
-Use when the site is already React/Next, or when you have many stateful 3D UI components (configurators, product pickers).
+## 4. Standalone Vite Variant
 
+Only use Vite if:
+1. The user explicitly requests a standalone vanilla Vite project with no framework.
+2. Building a self-contained single-page marketing microsite without React.
+
+Scaffold with: `bash scripts/scaffold.sh <target-dir>` (uses `assets/starter/`).
+
+---
+
+## 5. 3D Model Pipeline & Decoders
+
+### Instant Production Automotive Model
+Run:
 ```bash
-npm i three @react-three/fiber @react-three/drei gsap lenis
+bash scripts/download-car-model.sh public
 ```
+This fetches the official Three.js high-poly, lightweight (1.68 MB) Ferrari sports car GLB with named parts (`body`, `rims`, `trim`, `glass`, `wheels`) and contact shadow texture directly into `public/models/`.
 
-Key rules:
-- **Don't use drei `<ScrollControls>` for long marketing pages** — it creates its own scroll container and fights Lenis/SEO. Instead: Lenis + GSAP ScrollTrigger update a **ref/store value** (`progress`), and `useFrame` reads it.
-- Keep scroll state **out of React state** (no re-render per frame). Use a mutable ref or `zustand` with `getState()` inside `useFrame`.
-- `<Canvas dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: 'high-performance' }} frameloop="always">`; use `frameloop="demand"` + `invalidate()` for mostly-static scenes.
-- `<PerformanceMonitor onDecline={() => setDpr(1)} />` and `<AdaptiveDpr pixelated />` from drei for adaptive quality.
-- Load models with `useGLTF` (Draco/Meshopt auto handled; set decoder path if self-hosting) and `useGLTF.preload`.
-- Wrap in `<Suspense>` with a real loader (`useProgress`).
-- In Next.js: render the Canvas in a client component, `dynamic(() => import(...), { ssr: false })`, and keep text content in server components for SEO.
-
-Minimal skeleton:
-
-```jsx
-// scrollStore.js
-export const scroll = { progress: 0 };
-
-// Scene.jsx
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
-import { MathUtils } from 'three';
-import { scroll } from './scrollStore';
-
-function Rig() {
-  useFrame(({ camera }, dt) => {
-    const t = scroll.progress;
-    camera.position.z = MathUtils.damp(camera.position.z, 6 - t * 4, 6, dt);
-    camera.lookAt(0, 0, 0);
-  });
-  return null;
-}
-
-export default function Scene() {
-  return (
-    <Canvas dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: 'high-performance' }}
-            style={{ position: 'fixed', inset: 0 }} aria-hidden>
-      <Environment preset="city" />
-      <Rig />
-      {/* meshes */}
-    </Canvas>
-  );
-}
+### Custom Artist Models
+Compress with glTF-Transform:
+```bash
+bash scripts/optimize-model.sh input.glb public/models/hero.glb
 ```
+Applies mesh welding, pruning, deduplication, WebP/KTX2 texture compression, and Meshopt geometry quantization.
 
-## 5. WebGPU / TSL (optional, advanced)
+---
 
-Use only when the user asks for cutting-edge, or the effect truly needs compute (millions of particles, GPU fluid). Otherwise WebGL2 is more predictable.
+## 6. Build & Deploy Config
 
-- Import from `three/webgpu` and use `WebGPURenderer`; it **falls back to WebGL2 automatically** when WebGPU is unavailable.
-- Write materials with **TSL** (Three Shading Language, `three/tsl`) instead of raw GLSL so they work on both backends.
-- Must `await renderer.init()` before first render.
-- Always test the fallback path (force with `forceWebGL: true`).
-- Raw `ShaderMaterial` GLSL does **not** run on the WebGPU backend; pick one path per project.
+Next.js Turbopack / Webpack config for large 3D assets and shaders:
 
-## 6. Alternatives
+```ts
+// next.config.ts
+import type { NextConfig } from 'next';
 
-- **Spline**: fastest for designers; runtime is heavy (~MBs), limited perf control. Fine for a quick hero; not for "smoothest".
-- **Theatre.js**: visual timeline editor for three/R3F; great when a motion designer tunes camera paths. Adds bundle weight.
-- **Babylon.js**: strong for game-like/product configurators; larger runtime; different ecosystem.
-- **model-viewer** (`<model-viewer>`): easiest product 3D + AR on mobile; less art-directable.
-- **OGL / regl**: ultra-light for pure shader backgrounds (a ~30 KB alternative to three when you only need a full-screen shader).
-
-## 7. Extras
-
-- **Physics**: `@dimforge/rapier3d-compat` (WASM; lazy-load it). Use sparingly; it costs bundle + CPU.
-- **3D text**: prefer HTML text. For decorative 3D text use `troika-three-text` (SDF, crisp, cheap) rather than `TextGeometry` (heavy).
-- **Audio**: off by default; opt-in toggle; `THREE.Audio` or Howler. Must be unlocked by a user gesture.
-- **Debug**: `lil-gui` + `stats-gl` behind `?debug` query param; strip from production via dynamic import.
-- **Image-based lighting assets**: `RoomEnvironment` (zero download) for neutral; `.hdr` → convert to `.exr`/`.ktx2` or PMREM-prebake for custom moods; keep ≤ 1–2 MB.
-
-## 8. Build & deploy
-
-`vite.config.js` essentials:
-
-```js
-import { defineConfig } from 'vite';
-export default defineConfig({
-  build: {
-    target: 'es2022',
-    chunkSizeWarningLimit: 900,
-    rollupOptions: { output: { manualChunks: { three: ['three'], gsap: ['gsap'] } } },
+const nextConfig: NextConfig = {
+  // Allow importing .glsl files if needed
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(glsl|vs|fs|vert|frag)$/,
+      use: ['raw-loader'],
+    });
+    return config;
   },
-  assetsInclude: ['**/*.glb', '**/*.hdr', '**/*.ktx2'],
-});
-```
+};
 
-Deploy (Netlify/Vercel/Cloudflare Pages are all fine):
-- Serve with **Brotli**. Cache `/assets/*` `immutable, max-age=31536000`; HTML `no-cache`.
-- Set correct MIME for `.glb` (`model/gltf-binary`), `.wasm`, `.ktx2`.
-- Preload the hero model/font with `<link rel="preload">`.
-- Add `<meta name="theme-color">` matching the first screen to avoid a flash.
+export default nextConfig;
+```
